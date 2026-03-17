@@ -1,0 +1,135 @@
+import React, { useState, useEffect } from 'react';
+import { X, Save, Image as ImageIcon } from 'lucide-react';
+
+const ProjectModal = ({ isOpen, onClose, onSave, project }) => {
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        techStack: '',
+        githubUrl: '',
+        demoUrl: '',
+        imageUrl: ''
+    });
+
+    useEffect(() => {
+        if (project) {
+            setFormData(project);
+        } else {
+            setFormData({
+                title: '',
+                description: '',
+                techStack: '',
+                githubUrl: '',
+                demoUrl: '',
+                imageUrl: ''
+            });
+        }
+    }, [project, isOpen]);
+
+    if (!isOpen) return null;
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave(formData);
+    };
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.id]: e.target.value });
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose}></div>
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative z-10 overflow-hidden animate-in zoom-in-95 duration-200">
+                <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <h2 className="text-xl font-bold text-slate-900">{project ? 'Edit Project' : 'New Project'}</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400">
+                        <X size={20} />
+                    </button>
+                </div>
+                
+                <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label htmlFor="title" className="text-sm font-bold text-slate-700">Project Title</label>
+                            <input 
+                                type="text" id="title" required
+                                value={formData.title} onChange={handleChange}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+                                placeholder="My Awesome Project"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label htmlFor="techStack" className="text-sm font-bold text-slate-700">Tech Stack (comma separated)</label>
+                            <input 
+                                type="text" id="techStack"
+                                value={formData.techStack} onChange={handleChange}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+                                placeholder="React, Node.js, Tailwind"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-1">
+                        <label htmlFor="description" className="text-sm font-bold text-slate-700">Description</label>
+                        <textarea 
+                            id="description" rows="3" required
+                            value={formData.description} onChange={handleChange}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all resize-none"
+                            placeholder="Tell more about your project..."
+                        ></textarea>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label htmlFor="githubUrl" className="text-sm font-bold text-slate-700">GitHub URL</label>
+                            <input 
+                                type="url" id="githubUrl"
+                                value={formData.githubUrl} onChange={handleChange}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+                                placeholder="https://github.com/..."
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label htmlFor="demoUrl" className="text-sm font-bold text-slate-700">Demo URL</label>
+                            <input 
+                                type="url" id="demoUrl"
+                                value={formData.demoUrl} onChange={handleChange}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+                                placeholder="https://my-demo.com"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-1">
+                        <label htmlFor="imageUrl" className="text-sm font-bold text-slate-700">Image URL</label>
+                        <div className="flex gap-4 items-center">
+                            <div className="relative flex-1">
+                                <ImageIcon className="absolute left-3 top-3 text-slate-400" size={18} />
+                                <input 
+                                    type="text" id="imageUrl"
+                                    value={formData.imageUrl} onChange={handleChange}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-10 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+                                    placeholder="Unsplash URL, etc."
+                                />
+                            </div>
+                            {formData.imageUrl && (
+                                <img src={formData.imageUrl} className="w-12 h-12 rounded-lg object-cover border border-slate-200" />
+                            )}
+                        </div>
+                    </div>
+                </form>
+
+                <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                    <button onClick={onClose} className="px-6 py-2.5 font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-all">Cancel</button>
+                    <button onClick={handleSubmit} className="px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2">
+                        <Save size={18} />
+                        Save Project
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ProjectModal;

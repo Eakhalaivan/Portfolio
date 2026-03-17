@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --primary: #3b82f6;
+    --secondary: #1d4ed8;
+    --dark: #0f172a;
+    --light: #f8fafc;
+  }
+
+  body {
+    @apply font-sans bg-white text-black transition-colors duration-500;
+  }
+}
+
+.dark {
+  @apply bg-black text-white;
+}
+
+:root {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+}
