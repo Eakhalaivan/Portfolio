@@ -7,13 +7,11 @@ services:
     dockerCommand: "java -jar app.jar"
     plan: free
     envVars:
-      - key: DB_HOST
+      - key: DB_HOST_PORT
         fromService:
           type: pserv
           name: portfolio-db
-          property: host
-      - key: DB_PORT
-        value: "3306"
+          property: hostport
       - key: DB_NAME
         fromService:
           type: pserv
