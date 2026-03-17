@@ -8,7 +8,10 @@ services:
     plan: free
     envVars:
       - key: DB_HOST
-        value: portfolio-db
+        fromService:
+          type: pserv
+          name: portfolio-db
+          property: host
       - key: DB_PORT
         value: "3306"
       - key: DB_NAME
