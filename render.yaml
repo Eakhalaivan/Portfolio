@@ -3,9 +3,9 @@ services:
     name: portfolio-backend
     env: docker
     dockerContext: backend
+    dockerfilePath: backend/Dockerfile
     dockerCommand: "java -jar app.jar"
-    plan: free # Change to starter or higher if needed
-    healthCheckPath: /actuator/health # Optional: if you have spring-boot-starter-actuator
+    plan: free
     envVars:
       - key: DB_HOST
         value: portfolio-db
@@ -33,23 +33,17 @@ services:
     name: portfolio-frontend
     env: docker
     dockerContext: frontend
+    dockerfilePath: frontend/Dockerfile
     plan: free
     envVars:
       - key: BACKEND_URL
         value: http://portfolio-backend:8080
 
-  - type: psql
-    name: portfolio-db-psql
-    # Note: Render provides Managed Postgres, NOT MySQL. 
-    # If MySQL is strictly required, we use a private service below.
-    # But for simplicity on Render, Postgres is recommended.
-    # HOWEVER, the code currently uses MySQL. I will stick to MySQL as requested.
-
-  - type: worker # Using worker/private service for MySQL to keep it internal
+  - type: worker
     name: portfolio-db
     env: docker
-    dockerContext: . # Root context to find docker-compose or similar if needed, but we'll use a direct image
-    dockerFilePath: db.Dockerfile # I'll create this to wrap mysql
+    dockerContext: .
+    dockerfilePath: db.Dockerfile
     plan: free
     disk:
       name: mysql-data
