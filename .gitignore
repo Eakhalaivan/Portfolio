@@ -1,2 +1,24 @@
-# Project exclude paths
-/backend/target/
+# Node
+node_modules/
+dist/
+.env
+
+# Maven
+target/
+*.class
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.DS_Store
+
+# Java
+.apt_generated/
+.factorypath
+.settings/
+.project
+.classpath
+
+# Logs
+*.log
