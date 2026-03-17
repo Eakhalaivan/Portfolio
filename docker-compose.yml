@@ -13,7 +13,9 @@ services:
       - db_data:/var/lib/mysql
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     container_name: portfolio-backend
     ports:
       - "8080:8080"
@@ -27,7 +29,9 @@ services:
       - db
 
   frontend:
-    build: ./frontend
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
     container_name: portfolio-frontend
     ports:
       - "80:80"
