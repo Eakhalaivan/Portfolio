@@ -39,7 +39,7 @@ services:
       - key: BACKEND_URL
         value: http://portfolio-backend:8080
 
-  - type: worker
+  - type: pserv
     name: portfolio-db
     env: docker
     dockerContext: database
