@@ -1,22 +1,23 @@
 package com.portfolio.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
 
-@Document(collection = "skills")
+@Entity
+@Table(name = "skills")
 public class Skill {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String category; // e.g., Languages, Frameworks, Tools
+    private String category;
 
     private String skillName;
 
-    private Integer level; // e.g., 1-100 or 1-5
+    private Integer level;
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
     public String getSkillName() { return skillName; }

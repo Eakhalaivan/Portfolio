@@ -20,16 +20,18 @@ public class SkillService {
         return skillRepository.findAll();
     }
 
-    public Skill getSkillById(String id) {
+    public Skill getSkillById(Long id) {
         return skillRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Skill not found with id: " + id));
     }
 
+    @Transactional
     public Skill createSkill(Skill skill) {
         return skillRepository.save(skill);
     }
 
-    public void deleteSkill(String id) {
+    @Transactional
+    public void deleteSkill(Long id) {
         Skill existingSkill = getSkillById(id);
         skillRepository.delete(existingSkill);
     }

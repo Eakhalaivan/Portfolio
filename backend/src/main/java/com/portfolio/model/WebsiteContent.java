@@ -1,19 +1,22 @@
 package com.portfolio.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
 
-@Document(collection = "website_content")
+@Entity
+@Table(name = "website_content")
 public class WebsiteContent {
 
     @Id
-    private String id = "1";
+    private Long id = 1L;
 
+    @Column(length = 255)
     private String homeTitle;
+    @Column(length = 500)
     private String homeSubtitle;
     private String homeImage;
     private String brandName;
 
+    @Column(length = 2000)
     private String aboutDescription;
     private String aboutImage;
 
@@ -31,14 +34,15 @@ public class WebsiteContent {
     private String projectsSubtitle;
     private String contactTitle;
     private String contactSubtitle;
+    @Column(length = 1000)
     private String contactDescription;
 
     // Default constructor
     public WebsiteContent() {}
 
     // Getters and Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getHomeTitle() { return homeTitle; }
     public void setHomeTitle(String homeTitle) { this.homeTitle = homeTitle; }

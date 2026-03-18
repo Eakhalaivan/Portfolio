@@ -4,20 +4,24 @@ import com.portfolio.model.WebsiteContent;
 import com.portfolio.repository.WebsiteContentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class WebsiteContentService {
 
-    @Autowired
-    private WebsiteContentRepository websiteContentRepository;
+    private final WebsiteContentRepository websiteContentRepository;
+
+    public WebsiteContentService(WebsiteContentRepository websiteContentRepository) {
+        this.websiteContentRepository = websiteContentRepository;
+    }
 
     public WebsiteContent getContent() {
-        return websiteContentRepository.findById("1").orElseGet(() -> {
+        return websiteContentRepository.findById(1L).orElseGet(() -> {
             WebsiteContent defaultContent = new WebsiteContent();
-            defaultContent.setId("1");
+            defaultContent.setId(1L);
             defaultContent.setHomeTitle("Hi, I'm Eakhalaivan");
             defaultContent.setHomeSubtitle("Java Backend Developer | Spring Boot | React | Full Stack Developer");
-            defaultContent.setHomeImage(""); // Default image or user's existing image URL
+            defaultContent.setHomeImage("");
             defaultContent.setBrandName("Eakhalaivan");
             defaultContent.setAboutTitle("About Me");
             defaultContent.setAboutDescription("I am a Java developer specializing in backend and full-stack web application development...");
@@ -42,6 +46,7 @@ public class WebsiteContentService {
         });
     }
 
+    @Transactional
     public WebsiteContent updateContent(WebsiteContent newContent) {
         WebsiteContent existing = getContent();
         existing.setHomeTitle(newContent.getHomeTitle());
