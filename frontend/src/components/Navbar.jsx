@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 const Navbar = () => {
+    const { content, loading } = useContent();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -12,6 +14,9 @@ const Navbar = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    if (loading) return null;
+    const { brandName = "Portfolio" } = content || {};
 
     const navLinks = [
         { name: 'Home', href: '#home' },
@@ -26,7 +31,7 @@ const Navbar = () => {
                 <div className="flex justify-between items-center h-16">
                     <div className="flex-shrink-0 flex items-center">
                         <a href="#" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-emerald-500">
-                           Eakhalaivan<span className="text-blue-600">.</span>
+                           {brandName}<span className="text-blue-600">.</span>
                         </a>
                     </div>
                     

@@ -25,8 +25,7 @@ public class ContactService {
         return contactRepository.findAll();
     }
 
-    @Transactional
-    public void deleteContact(Long id) {
+    public void deleteContact(String id) {
         contactRepository.deleteById(id);
     }
 }

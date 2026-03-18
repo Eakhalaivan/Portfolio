@@ -33,12 +33,12 @@ public class AdminController {
     }
 
     @PutMapping("/projects/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project project) {
+    public ResponseEntity<Project> updateProject(@PathVariable String id, @RequestBody Project project) {
         return ResponseEntity.ok(projectService.updateProject(id, project));
     }
 
     @DeleteMapping("/projects/{id}")
-    public ResponseEntity<MessageResponse> deleteProject(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> deleteProject(@PathVariable String id) {
         projectService.deleteProject(id);
         return ResponseEntity.ok(new MessageResponse("Project deleted successfully"));
     }
@@ -50,7 +50,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/skills/{id}")
-    public ResponseEntity<MessageResponse> deleteSkill(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> deleteSkill(@PathVariable String id) {
         skillService.deleteSkill(id);
         return ResponseEntity.ok(new MessageResponse("Skill deleted successfully"));
     }
@@ -62,7 +62,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/contacts/{id}")
-    public ResponseEntity<MessageResponse> deleteContact(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> deleteContact(@PathVariable String id) {
         contactService.deleteContact(id);
         return ResponseEntity.ok(new MessageResponse("Contact message deleted successfully"));
     }

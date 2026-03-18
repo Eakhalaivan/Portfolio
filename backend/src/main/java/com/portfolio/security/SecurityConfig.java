@@ -45,7 +45,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/skills/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/contacts").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/content").permitAll()
                         // Secured endpoints
+                        .requestMatchers(HttpMethod.PUT, "/api/content").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Everything else requires authentication
                         .anyRequest().authenticated()

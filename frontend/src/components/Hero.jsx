@@ -1,8 +1,24 @@
+import React from 'react';
 import { ArrowRight, Mail } from 'lucide-react';
 import Hyperspeed from './Hyperspeed';
-import profileImg from '../assets/protifl.png';
+import { useContent } from '../context/ContentContext';
+import defaultProfileImg from '../assets/protifl.png';
 
 const Hero = () => {
+    const { content, loading } = useContent();
+
+    if (loading) {
+        return <div className="min-h-screen bg-black flex items-center justify-center text-white">Loading...</div>;
+    }
+
+    const { 
+        homeTitle = "Hi, I'm Eakhalaivan", 
+        homeSubtitle = "Java Backend Developer | Spring Boot | React | Full Stack Developer", 
+        homeImage 
+    } = content || {};
+
+    const profileImg = homeImage || defaultProfileImg;
+
     return (
         <section id="home" className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden flex items-center min-h-screen bg-black">
             <div className="absolute inset-0 z-0">
@@ -52,16 +68,17 @@ const Hero = () => {
                             👋 Welcome to my portfolio
                         </div>
                         <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight">
-                            Hi, I'm <br className="hidden md:block"/>
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500 relative inline-block">
-                                Eakhalaivan 
-                                <span className="absolute bottom-2 left-0 w-full h-3 bg-blue-200/50 -z-10 transform -rotate-2"></span>
-                            </span>
+                            {homeTitle.split(',').map((part, i) => (
+                                <React.Fragment key={i}>
+                                    {i === 0 ? part : <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500 relative inline-block">
+                                        {part}
+                                        <span className="absolute bottom-2 left-0 w-full h-3 bg-blue-200/50 -z-10 transform -rotate-2"></span>
+                                    </span>}
+                                    {i === 0 && <br className="hidden md:block"/>}
+                                </React.Fragment>
+                            ))}
                         </h1>
-                        <h2 className="text-2xl md:text-3xl text-gray-200 font-medium mt-4">Java Backend Developer | Spring Boot | React |Full Stack Developer</h2>
-                        <p className="text-lg text-gray-300 max-w-xl mx-auto md:mx-0 leading-relaxed mt-6">
-                            I am a Java developer specializing in backend and full-stack web application development using Java, Spring Boot, SQL, and React. I build scalable REST APIs, design database-driven systems, and create responsive user interfaces that deliver reliable and efficient web solutions.
-                        </p>
+                        <h2 className="text-2xl md:text-3xl text-gray-200 font-medium mt-4">{homeSubtitle}</h2>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mt-10">
                             <a href="#projects" className="px-8 py-4 bg-white text-black rounded-lg font-medium hover:bg-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group">
                                 View My Work

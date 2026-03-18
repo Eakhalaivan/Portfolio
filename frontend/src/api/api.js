@@ -12,6 +12,25 @@ export const fetchSkills = async () => {
     return response.json();
 };
 
+export const fetchWebsiteContent = async () => {
+    const response = await fetch(`${API_URL}/content`);
+    if (!response.ok) throw new Error('Failed to fetch website content');
+    return response.json();
+};
+
+export const updateWebsiteContent = async (token, contentData) => {
+    const response = await fetch(`${API_URL}/content`, {
+        method: 'PUT',
+        headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(contentData)
+    });
+    if (!response.ok) throw new Error('Failed to update website content');
+    return response.json();
+};
+
 export const submitContact = async (formData) => {
     const response = await fetch(`${API_URL}/contacts`, {
         method: 'POST',

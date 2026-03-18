@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { submitContact } from '../api/api';
-import { Mail, MapPin, Github, Linkedin, Twitter, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mail, MapPin, Github, Linkedin, Phone, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 const formatUrl = (url) => {
     if (!url) return '';
@@ -11,9 +12,23 @@ const formatUrl = (url) => {
 };
 
 const Contact = () => {
+    const { content, loading } = useContent();
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
     const [status, setStatus] = useState({ type: '', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    if (loading) return null;
+
+    const { 
+        contactEmail = "eakhalaivanp@gmail.com", 
+        contactPhone = "Not provided",
+        location = "India",
+        linkedinUrl = "",
+        githubUrl = "",
+        contactTitle = "Let's Work Together",
+        contactSubtitle = "Get In Touch",
+        contactDescription = "Have a project in mind or just want to say hi? Feel free to send me a message and I'll get back to you as soon as possible."
+    } = content || {};
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -47,10 +62,10 @@ const Contact = () => {
                     
                     <div className="lg:col-span-2 space-y-8">
                         <div>
-                            <h2 className="text-sm font-bold text-emerald-500 tracking-widest uppercase mb-2">Get In Touch</h2>
-                            <h3 className="text-4xl font-bold mb-6">Let's Work Together</h3>
+                            <h2 className="text-sm font-bold text-emerald-500 tracking-widest uppercase mb-2">{contactSubtitle}</h2>
+                            <h3 className="text-4xl font-bold mb-6">{contactTitle}</h3>
                             <p className="text-slate-400 text-lg leading-relaxed">
-                                Have a project in mind or just want to say hi? Feel free to send me a message and I'll get back to you as soon as possible.
+                                {contactDescription}
                             </p>
                         </div>
                         
@@ -61,7 +76,16 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <h4 className="text-white font-medium mb-1">Email</h4>
-                                    <a href="mailto:hello@example.com" className="text-slate-400 hover:text-white transition-colors">eakhalaivanp@gmail.com</a>
+                                    <a href={`mailto:${contactEmail}`} className="text-slate-400 hover:text-white transition-colors">{contactEmail}</a>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-blue-600 flex-shrink-0">
+                                    <Phone size={24} />
+                                </div>
+                                <div>
+                                    <h4 className="text-white font-medium mb-1">Phone</h4>
+                                    <span className="text-slate-400">{contactPhone}</span>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -70,35 +94,33 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <h4 className="text-white font-medium mb-1">Location</h4>
-                                    <span className="text-slate-400">India</span>
+                                    <span className="text-slate-400">{location}</span>
                                 </div>
                             </div>
                         </div>
                         
                         <h4 className="text-white font-medium mb-4">Follow Me</h4>
                         <div className="flex gap-4">
-                            <a 
-                                href={formatUrl("https://github.com/Eakhalaivan")}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1"
-                            >
-                                <Github size={20} />
-                            </a>
-                            <a 
-                                href={formatUrl("https://www.linkedin.com/in/eakhalaivan-p-220979378")}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1"
-                            >
-                                <Linkedin size={20} />
-                            </a>
-                            <a 
-                                href="#"
-                                className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1"
-                            >
-                                <Twitter size={20} />
-                            </a>
+                            {githubUrl && (
+                                <a 
+                                    href={formatUrl(githubUrl)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1"
+                                >
+                                    <Github size={20} />
+                                </a>
+                            )}
+                            {linkedinUrl && (
+                                <a 
+                                    href={formatUrl(linkedinUrl)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1"
+                                >
+                                    <Linkedin size={20} />
+                                </a>
+                            )}
                         </div>
                         
                     </div>

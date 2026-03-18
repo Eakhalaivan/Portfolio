@@ -20,18 +20,16 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public Project getProjectById(Long id) {
+    public Project getProjectById(String id) {
         return projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + id));
     }
 
-    @Transactional
     public Project createProject(Project project) {
         return projectRepository.save(project);
     }
 
-    @Transactional
-    public Project updateProject(Long id, Project projectDetails) {
+    public Project updateProject(String id, Project projectDetails) {
         Project existingProject = getProjectById(id);
         existingProject.setTitle(projectDetails.getTitle());
         existingProject.setDescription(projectDetails.getDescription());
@@ -42,8 +40,7 @@ public class ProjectService {
         return projectRepository.save(existingProject);
     }
 
-    @Transactional
-    public void deleteProject(Long id) {
+    public void deleteProject(String id) {
         Project existingProject = getProjectById(id);
         projectRepository.delete(existingProject);
     }

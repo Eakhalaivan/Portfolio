@@ -1,7 +1,7 @@
 package com.portfolio.repository;
 
 import com.portfolio.model.Contact;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface ContactRepository extends JpaRepository<Contact, Long> {
+public interface ContactRepository extends MongoRepository<Contact, String> {
 }

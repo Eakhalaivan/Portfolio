@@ -9,7 +9,8 @@ import {
     deleteContact,
     createProject,
     updateProject,
-    createSkill
+    createSkill,
+    updateWebsiteContent
 } from '../api/api';
 import { 
     LayoutDashboard, 
@@ -22,8 +23,12 @@ import {
     Edit3, 
     ExternalLink, 
     Github,
-    ChevronRight
+    ChevronRight,
+    Settings,
+    Save,
+    Code
 } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 import ProjectModal from '../components/ProjectModal';
 import SkillModal from '../components/SkillModal';
 
@@ -37,10 +42,35 @@ const formatUrl = (url) => {
 
 const AdminDashboard = () => {
     const { token, logout } = useAuth();
+    const { content: globalContent, refreshContent } = useContent();
     const [activeTab, setActiveTab] = useState('projects');
     const [data, setData] = useState({ projects: [], skills: [], contacts: [] });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Content Form State
+    const [contentForm, setContentForm] = useState({
+        homeTitle: '',
+        homeSubtitle: '',
+        homeImage: '',
+        brandName: '',
+        aboutDescription: '',
+        aboutImage: '',
+        contactEmail: '',
+        contactPhone: '',
+        linkedinUrl: '',
+        githubUrl: '',
+        location: '',
+        aboutTitle: '',
+        skillsTitle: '',
+        skillsSubtitle: '',
+        projectsTitle: '',
+        projectsSubtitle: '',
+        contactTitle: '',
+        contactSubtitle: '',
+        contactDescription: ''
+    });
+    const [isSavingContent, setIsSavingContent] = useState(false);
 
     // Modal State
     const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
@@ -50,6 +80,32 @@ const AdminDashboard = () => {
     useEffect(() => {
         loadAllData();
     }, [token]);
+
+    useEffect(() => {
+        if (globalContent) {
+            setContentForm({
+                homeTitle: globalContent.homeTitle || '',
+                homeSubtitle: globalContent.homeSubtitle || '',
+                homeImage: globalContent.homeImage || '',
+                brandName: globalContent.brandName || '',
+                aboutDescription: globalContent.aboutDescription || '',
+                aboutImage: globalContent.aboutImage || '',
+                contactEmail: globalContent.contactEmail || '',
+                contactPhone: globalContent.contactPhone || '',
+                linkedinUrl: globalContent.linkedinUrl || '',
+                githubUrl: globalContent.githubUrl || '',
+                location: globalContent.location || '',
+                aboutTitle: globalContent.aboutTitle || '',
+                skillsTitle: globalContent.skillsTitle || '',
+                skillsSubtitle: globalContent.skillsSubtitle || '',
+                projectsTitle: globalContent.projectsTitle || '',
+                projectsSubtitle: globalContent.projectsSubtitle || '',
+                contactTitle: globalContent.contactTitle || '',
+                contactSubtitle: globalContent.contactSubtitle || '',
+                contactDescription: globalContent.contactDescription || ''
+            });
+        }
+    }, [globalContent]);
 
     const loadAllData = async () => {
         setLoading(true);
@@ -92,6 +148,20 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleSaveContent = async (e) => {
+        e.preventDefault();
+        setIsSavingContent(true);
+        try {
+            await updateWebsiteContent(token, contentForm);
+            await refreshContent();
+            alert('Website content updated successfully!');
+        } catch (err) {
+            alert('Error updating content: ' + err.message);
+        } finally {
+            setIsSavingContent(false);
+        }
+    };
+
     const handleDelete = async (type, id) => {
         if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
         try {
@@ -113,6 +183,7 @@ const AdminDashboard = () => {
         { id: 'projects', name: 'Projects', icon: <Briefcase size={20} /> },
         { id: 'skills', name: 'Skills', icon: <Zap size={20} /> },
         { id: 'contacts', name: 'Messages', icon: <Mail size={20} /> },
+        { id: 'content', name: 'Website Content', icon: <Settings size={20} /> },
     ];
 
     return (
@@ -309,6 +380,256 @@ const AdminDashboard = () => {
                                         <div className="col-span-full py-12 text-center text-slate-400">No messages yet.</div>
                                     )}
                                 </div>
+                            )}
+
+                            {activeTab === 'content' && (
+                                <form onSubmit={handleSaveContent} className="p-8 space-y-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        {/* Home Section */}
+                                        <div className="space-y-6">
+                                            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                                <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center"><LayoutDashboard size={18} /></div>
+                                                Home / Hero Section
+                                            </h3>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">Main Title</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={contentForm.homeTitle}
+                                                        onChange={(e) => setContentForm({...contentForm, homeTitle: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                        placeholder="e.g. Hi, I'm Eakhalaivan"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">Subtitle / Role</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={contentForm.homeSubtitle}
+                                                        onChange={(e) => setContentForm({...contentForm, homeSubtitle: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                        placeholder="e.g. Java Backend Developer"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">Hero Image URL</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={contentForm.homeImage}
+                                                        onChange={(e) => setContentForm({...contentForm, homeImage: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                        placeholder="Cloudinary or image link"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">Brand/Logo Name</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={contentForm.brandName}
+                                                        onChange={(e) => setContentForm({...contentForm, brandName: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                        placeholder="e.g. My Portfolio"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* About Section */}
+                                        <div className="space-y-6">
+                                            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                                <div className="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center"><Briefcase size={18} /></div>
+                                                About Section
+                                            </h3>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">About Section Title</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={contentForm.aboutTitle}
+                                                        onChange={(e) => setContentForm({...contentForm, aboutTitle: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                        placeholder="e.g. About Me"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">About Description</label>
+                                                    <textarea 
+                                                        rows="4"
+                                                        value={contentForm.aboutDescription}
+                                                        onChange={(e) => setContentForm({...contentForm, aboutDescription: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none resize-none"
+                                                        placeholder="Tell something about yourself..."
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">About Image URL</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={contentForm.aboutImage}
+                                                        onChange={(e) => setContentForm({...contentForm, aboutImage: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                        placeholder="Cloudinary or image link"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Skills & Projects Headers */}
+                                        <div className="space-y-6 md:col-span-2 border-t pt-8">
+                                            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                                <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center"><Code size={18} /></div>
+                                                Skills & Projects Headers
+                                            </h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="space-y-4">
+                                                    <div>
+                                                        <label className="block text-sm font-bold text-slate-700 mb-1">Skills Section Title</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={contentForm.skillsTitle}
+                                                            onChange={(e) => setContentForm({...contentForm, skillsTitle: e.target.value})}
+                                                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                            placeholder="Technical Skills"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-sm font-bold text-slate-700 mb-1">Skills Section Subtitle</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={contentForm.skillsSubtitle}
+                                                            onChange={(e) => setContentForm({...contentForm, skillsSubtitle: e.target.value})}
+                                                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                            placeholder="My Toolkit"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <div>
+                                                        <label className="block text-sm font-bold text-slate-700 mb-1">Projects Section Title</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={contentForm.projectsTitle}
+                                                            onChange={(e) => setContentForm({...contentForm, projectsTitle: e.target.value})}
+                                                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                            placeholder="Featured Projects"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-sm font-bold text-slate-700 mb-1">Projects Section Subtitle</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={contentForm.projectsSubtitle}
+                                                            onChange={(e) => setContentForm({...contentForm, projectsSubtitle: e.target.value})}
+                                                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                            placeholder="Portfolio"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Contact & Social */}
+                                        <div className="space-y-6 md:col-span-2">
+                                            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 border-t pt-8">
+                                                <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center"><Mail size={18} /></div>
+                                                Contact Section & Social
+                                            </h3>
+                                            <div className="space-y-4 mb-6">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label className="block text-sm font-bold text-slate-700 mb-1">Contact Section Title</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={contentForm.contactTitle}
+                                                            onChange={(e) => setContentForm({...contentForm, contactTitle: e.target.value})}
+                                                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                            placeholder="e.g. Let's Work Together"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-sm font-bold text-slate-700 mb-1">Contact Section Subtitle</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={contentForm.contactSubtitle}
+                                                            onChange={(e) => setContentForm({...contentForm, contactSubtitle: e.target.value})}
+                                                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                            placeholder="e.g. Get In Touch"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">Contact Description</label>
+                                                    <textarea 
+                                                        rows="3"
+                                                        value={contentForm.contactDescription}
+                                                        onChange={(e) => setContentForm({...contentForm, contactDescription: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none resize-none"
+                                                        placeholder="Contact CTA text..."
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">Email</label>
+                                                    <input 
+                                                        type="email" 
+                                                        value={contentForm.contactEmail}
+                                                        onChange={(e) => setContentForm({...contentForm, contactEmail: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">Phone</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={contentForm.contactPhone}
+                                                        onChange={(e) => setContentForm({...contentForm, contactPhone: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">LinkedIn URL</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={contentForm.linkedinUrl}
+                                                        onChange={(e) => setContentForm({...contentForm, linkedinUrl: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">GitHub URL</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={contentForm.githubUrl}
+                                                        onChange={(e) => setContentForm({...contentForm, githubUrl: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-1">Location</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={contentForm.location}
+                                                        onChange={(e) => setContentForm({...contentForm, location: e.target.value})}
+                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-end pt-6 border-t font-bold">
+                                        <button 
+                                            type="submit"
+                                            disabled={isSavingContent}
+                                            className="flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50"
+                                        >
+                                            <Save size={20} />
+                                            {isSavingContent ? 'Saving...' : 'Update Website Content'}
+                                        </button>
+                                    </div>
+                                </form>
                             )}
                         </div>
                     )}

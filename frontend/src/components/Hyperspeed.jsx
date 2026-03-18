@@ -426,6 +426,7 @@ const Hyperspeed = ({ effectOptions = DEFAULT_EFFECT_OPTIONS }) => {
       }
 
       initPasses() {
+        if (this.disposed) return;
         this.renderPass = new RenderPass(this.scene, this.camera);
         this.bloomPass = new EffectPass(
           this.camera,
@@ -474,6 +475,7 @@ const Hyperspeed = ({ effectOptions = DEFAULT_EFFECT_OPTIONS }) => {
       }
 
       init() {
+        if (this.disposed) return;
         this.initPasses();
         const options = this.options;
         this.road.init();
