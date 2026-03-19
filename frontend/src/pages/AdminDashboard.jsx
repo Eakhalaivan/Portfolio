@@ -112,7 +112,9 @@ const AdminDashboard = () => {
                 contactTitle: globalContent.contactTitle || '',
                 contactSubtitle: globalContent.contactSubtitle || '',
                 contactDescription: globalContent.contactDescription || '',
-                resumeUrl: globalContent.resumeUrl || ''
+                resumeUrl: globalContent.resumeUrl || '',
+                cloudinaryCloudName: globalContent.cloudinaryCloudName || '',
+                cloudinaryUploadPreset: globalContent.cloudinaryUploadPreset || ''
             });
         }
     }, [globalContent]);
@@ -165,6 +167,34 @@ const AdminDashboard = () => {
             alert('Error saving skill: ' + err.message);
         } finally {
             setIsSavingSkill(false);
+        }
+    };
+
+    const handleFileUpload = async (file, field) => {
+        if (!contentForm.cloudinaryCloudName || !contentForm.cloudinaryUploadPreset) {
+            alert('Please configure Cloudinary settings first at the bottom of this page.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', contentForm.cloudinaryUploadPreset);
+
+        try {
+            showNotification('Uploading to Cloudinary...', 'info');
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${contentForm.cloudinaryCloudName}/auto/upload`,
+                { method: 'POST', body: formData }
+            );
+
+            if (!response.ok) throw new Error('Upload failed');
+
+            const data = await response.json();
+            setContentForm(prev => ({ ...prev, [field]: data.secure_url }));
+            showNotification('File uploaded successfully!');
+        } catch (err) {
+            console.error('Upload error:', err);
+            alert('Upload failed: ' + err.message);
         }
     };
 
@@ -446,15 +476,21 @@ const AdminDashboard = () => {
                                                         placeholder="e.g. Java Backend Developer"
                                                     />
                                                 </div>
-                                                <div>
-                                                    <label className="block text-sm font-bold text-slate-700 mb-1">Hero Image URL</label>
-                                                    <input 
-                                                        type="text" 
-                                                        value={contentForm.homeImage}
-                                                        onChange={(e) => setContentForm({...contentForm, homeImage: e.target.value})}
-                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
-                                                        placeholder="Cloudinary or image link"
-                                                    />
+                                                <div className="flex gap-2 items-end">
+                                                    <div className="flex-1">
+                                                        <label className="block text-sm font-bold text-slate-700 mb-1">Hero Image URL</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={contentForm.homeImage}
+                                                            onChange={(e) => setContentForm({...contentForm, homeImage: e.target.value})}
+                                                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                            placeholder="Cloudinary or image link"
+                                                        />
+                                                    </div>
+                                                    <label className="flex flex-col items-center justify-center p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 cursor-pointer transition-all border border-blue-100 shadow-sm" title="Upload Photo">
+                                                        <Upload size={20} />
+                                                        <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files[0] && handleFileUpload(e.target.files[0], 'homeImage')} />
+                                                    </label>
                                                 </div>
                                                 <div>
                                                     <label className="block text-sm font-bold text-slate-700 mb-1">Brand/Logo Name</label>
@@ -496,25 +532,37 @@ const AdminDashboard = () => {
                                                         placeholder="Tell something about yourself..."
                                                     />
                                                 </div>
-                                                <div>
-                                                    <label className="block text-sm font-bold text-slate-700 mb-1">About Image URL</label>
-                                                    <input 
-                                                        type="text" 
-                                                        value={contentForm.aboutImage}
-                                                        onChange={(e) => setContentForm({...contentForm, aboutImage: e.target.value})}
-                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
-                                                        placeholder="Cloudinary or image link"
-                                                    />
+                                                <div className="flex gap-2 items-end">
+                                                    <div className="flex-1">
+                                                        <label className="block text-sm font-bold text-slate-700 mb-1">About Image URL</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={contentForm.aboutImage}
+                                                            onChange={(e) => setContentForm({...contentForm, aboutImage: e.target.value})}
+                                                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                            placeholder="Cloudinary or image link"
+                                                        />
+                                                    </div>
+                                                    <label className="flex flex-col items-center justify-center p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 cursor-pointer transition-all border border-blue-100 shadow-sm" title="Upload Photo">
+                                                        <Upload size={20} />
+                                                        <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files[0] && handleFileUpload(e.target.files[0], 'aboutImage')} />
+                                                    </label>
                                                 </div>
-                                                <div>
-                                                    <label className="block text-sm font-bold text-slate-700 mb-1">Resume URL (PDF link)</label>
-                                                    <input 
-                                                        type="text" 
-                                                        value={contentForm.resumeUrl}
-                                                        onChange={(e) => setContentForm({...contentForm, resumeUrl: e.target.value})}
-                                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
-                                                        placeholder="Link to your resume (Drive, Dropbox, etc.)"
-                                                    />
+                                                <div className="flex gap-2 items-end">
+                                                    <div className="flex-1">
+                                                        <label className="block text-sm font-bold text-slate-700 mb-1">Resume URL (PDF link)</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={contentForm.resumeUrl}
+                                                            onChange={(e) => setContentForm({...contentForm, resumeUrl: e.target.value})}
+                                                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                                            placeholder="Link to your resume"
+                                                        />
+                                                    </div>
+                                                    <label className="flex flex-col items-center justify-center p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-100 cursor-pointer transition-all border border-emerald-100 shadow-sm" title="Upload Resume">
+                                                        <FileText size={20} />
+                                                        <input type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={(e) => e.target.files[0] && handleFileUpload(e.target.files[0], 'resumeUrl')} />
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -661,6 +709,40 @@ const AdminDashboard = () => {
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {/* Cloudinary Settings */}
+                                        <div className="md:col-span-2 space-y-6 pt-8 border-t">
+                                            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                                <div className="w-8 h-8 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center"><ImageIcon size={18} /></div>
+                                                Cloudinary Upload Settings (Required for Direct Upload)
+                                            </h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-orange-50/50 rounded-2xl border border-orange-100">
+                                                <div className="space-y-1">
+                                                    <label className="text-sm font-bold text-slate-700">Cloud Name</label>
+                                                    <input 
+                                                        type="text"
+                                                        value={contentForm.cloudinaryCloudName}
+                                                        onChange={(e) => setContentForm({...contentForm, cloudinaryCloudName: e.target.value})}
+                                                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                                                        placeholder="Your Cloudinary cloud_name"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-sm font-bold text-slate-700">Unsigned Upload Preset</label>
+                                                    <input 
+                                                        type="text"
+                                                        value={contentForm.cloudinaryUploadPreset}
+                                                        onChange={(e) => setContentForm({...contentForm, cloudinaryUploadPreset: e.target.value})}
+                                                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                                                        placeholder="Your Unsigned Upload Preset name"
+                                                    />
+                                                </div>
+                                                <div className="md:col-span-2 text-xs text-orange-600 flex items-start gap-2">
+                                                    <div className="mt-0.5">ℹ️</div>
+                                                    <p>Get these from your Cloudinary Dashboard. The preset must be set to <strong>Unsigned</strong> in Settings &gt; Upload &gt; Upload Presets.</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div className="flex justify-end pt-6 border-t font-bold">
@@ -687,6 +769,8 @@ const AdminDashboard = () => {
                 onSave={handleSaveProject} 
                 project={editingProject} 
                 isSaving={isSavingProject}
+                cloudinaryCloudName={contentForm.cloudinaryCloudName}
+                cloudinaryUploadPreset={contentForm.cloudinaryUploadPreset}
             />
             <SkillModal 
                 isOpen={isSkillModalOpen} 

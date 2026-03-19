@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Image as ImageIcon } from 'lucide-react';
 
-const ProjectModal = ({ isOpen, onClose, onSave, project, isSaving }) => {
+const ProjectModal = ({ isOpen, onClose, onSave, project, isSaving, cloudinaryCloudName, cloudinaryUploadPreset }) => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -35,6 +35,35 @@ const ProjectModal = ({ isOpen, onClose, onSave, project, isSaving }) => {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
+    };
+
+    const handleFileUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!cloudinaryCloudName || !cloudinaryUploadPreset) {
+            alert('Please configure Cloudinary settings in the "Website Content" tab first.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', cloudinaryUploadPreset);
+
+        try {
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/auto/upload`,
+                { method: 'POST', body: formData }
+            );
+
+            if (!response.ok) throw new Error('Upload failed');
+
+            const data = await response.json();
+            setFormData(prev => ({ ...prev, imageUrl: data.secure_url }));
+        } catch (err) {
+            console.error('Upload error:', err);
+            alert('Upload failed: ' + err.message);
+        }
     };
 
     return (
@@ -103,7 +132,7 @@ const ProjectModal = ({ isOpen, onClose, onSave, project, isSaving }) => {
 
                     <div className="space-y-1">
                         <label htmlFor="imageUrl" className="text-sm font-bold text-slate-700">Image URL</label>
-                        <div className="flex gap-4 items-center">
+                        <div className="flex gap-2 items-center">
                             <div className="relative flex-1">
                                 <ImageIcon className="absolute left-3 top-3 text-slate-400" size={18} />
                                 <input 
@@ -113,6 +142,10 @@ const ProjectModal = ({ isOpen, onClose, onSave, project, isSaving }) => {
                                     placeholder="Unsplash URL, etc."
                                 />
                             </div>
+                            <label className="flex flex-col items-center justify-center p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 cursor-pointer transition-all border border-blue-100 shadow-sm" title="Upload Photo">
+                                <ImageIcon size={20} />
+                                <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} />
+                            </label>
                             {formData.imageUrl && (
                                 <div className="relative group">
                                     <img src={formData.imageUrl} className="w-12 h-12 rounded-lg object-cover border border-slate-200" />

@@ -105,5 +105,15 @@ public class WebsiteContent {
 
     public String getResumeUrl() { return resumeUrl; }
     public void setResumeUrl(String resumeUrl) { this.resumeUrl = resumeUrl; }
+
+    private String cloudinaryCloudName;
+    private String cloudinaryUploadPreset;
+
+    public String getCloudinaryCloudName() { return cloudinaryCloudName; }
+    public void setCloudinaryCloudName(String cloudinaryCloudName) { this.cloudinaryCloudName = cloudinaryCloudName; }
+
+    public String getCloudinaryUploadPreset() { return cloudinaryUploadPreset; }
+    public void setCloudinaryUploadPreset(String cloudinaryUploadPreset) { this.cloudinaryUploadPreset = cloudinaryUploadPreset; }
 }
+
 
