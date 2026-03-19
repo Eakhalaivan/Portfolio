@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Image as ImageIcon } from 'lucide-react';
 
-const ProjectModal = ({ isOpen, onClose, onSave, project }) => {
+const ProjectModal = ({ isOpen, onClose, onSave, project, isSaving }) => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -48,7 +48,7 @@ const ProjectModal = ({ isOpen, onClose, onSave, project }) => {
                     </button>
                 </div>
                 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                <form id="project-form" onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-1">
                             <label htmlFor="title" className="text-sm font-bold text-slate-700">Project Title</label>
@@ -114,7 +114,16 @@ const ProjectModal = ({ isOpen, onClose, onSave, project }) => {
                                 />
                             </div>
                             {formData.imageUrl && (
-                                <img src={formData.imageUrl} className="w-12 h-12 rounded-lg object-cover border border-slate-200" />
+                                <div className="relative group">
+                                    <img src={formData.imageUrl} className="w-12 h-12 rounded-lg object-cover border border-slate-200" />
+                                    <button 
+                                        type="button"
+                                        onClick={() => setFormData({...formData, imageUrl: ''})}
+                                        className="absolute -top-1 -right-1 bg-red-500 text-white p-1 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                        <X size={12} />
+                                    </button>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -122,9 +131,14 @@ const ProjectModal = ({ isOpen, onClose, onSave, project }) => {
 
                 <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
                     <button onClick={onClose} className="px-6 py-2.5 font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-all">Cancel</button>
-                    <button onClick={handleSubmit} className="px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2">
-                        <Save size={18} />
-                        Save Project
+                    <button 
+                        form="project-form"
+                        type="submit"
+                        disabled={isSaving}
+                        className="px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        <Save size={18} className={isSaving ? 'animate-spin' : ''} />
+                        {isSaving ? 'Saving...' : 'Save Project'}
                     </button>
                 </div>
             </div>

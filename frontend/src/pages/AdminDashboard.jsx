@@ -77,6 +77,9 @@ const AdminDashboard = () => {
     const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
     const [editingProject, setEditingProject] = useState(null);
 
+    const [isSavingProject, setIsSavingProject] = useState(false);
+    const [isSavingSkill, setIsSavingSkill] = useState(false);
+
     useEffect(() => {
         loadAllData();
     }, [token]);
@@ -124,6 +127,7 @@ const AdminDashboard = () => {
     };
 
     const handleSaveProject = async (projectData) => {
+        setIsSavingProject(true);
         try {
             if (editingProject) {
                 await updateProject(token, editingProject.id, projectData);
@@ -132,19 +136,25 @@ const AdminDashboard = () => {
             }
             setIsProjectModalOpen(false);
             setEditingProject(null);
-            loadAllData();
+            await loadAllData();
         } catch (err) {
-            alert('Error saving project: ' + err.message);
+            console.error('Save error:', err);
+            alert(`Error saving project: ${err.message}. Please check if you are logged in correctly.`);
+        } finally {
+            setIsSavingProject(false);
         }
     };
 
     const handleSaveSkill = async (skillData) => {
+        setIsSavingSkill(true);
         try {
             await createSkill(token, skillData);
             setIsSkillModalOpen(false);
-            loadAllData();
+            await loadAllData();
         } catch (err) {
             alert('Error saving skill: ' + err.message);
+        } finally {
+            setIsSavingSkill(false);
         }
     };
 
@@ -642,11 +652,13 @@ const AdminDashboard = () => {
                 onClose={() => setIsProjectModalOpen(false)} 
                 onSave={handleSaveProject} 
                 project={editingProject} 
+                isSaving={isSavingProject}
             />
             <SkillModal 
                 isOpen={isSkillModalOpen} 
                 onClose={() => setIsSkillModalOpen(false)} 
                 onSave={handleSaveSkill} 
+                isSaving={isSavingSkill}
             />
         </div>
     );

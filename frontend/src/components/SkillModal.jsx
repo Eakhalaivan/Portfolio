@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Save } from 'lucide-react';
 
-const SkillModal = ({ isOpen, onClose, onSave }) => {
+const SkillModal = ({ isOpen, onClose, onSave, isSaving }) => {
     const [formData, setFormData] = useState({
         skillName: '',
         category: 'Frontend',
@@ -31,7 +31,7 @@ const SkillModal = ({ isOpen, onClose, onSave }) => {
                     </button>
                 </div>
                 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form id="skill-form" onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div className="space-y-1">
                         <label htmlFor="skillName" className="text-sm font-bold text-slate-700">Skill Name</label>
                         <input 
@@ -70,9 +70,14 @@ const SkillModal = ({ isOpen, onClose, onSave }) => {
 
                 <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
                     <button onClick={onClose} className="px-6 py-2.5 font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-all">Cancel</button>
-                    <button onClick={handleSubmit} className="px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2">
-                        <Save size={18} />
-                        Save Skill
+                    <button 
+                        form="skill-form"
+                        type="submit"
+                        disabled={isSaving}
+                        className="px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        <Save size={18} className={isSaving ? 'animate-spin' : ''} />
+                        {isSaving ? 'Saving...' : 'Save Skill'}
                     </button>
                 </div>
             </div>
