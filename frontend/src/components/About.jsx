@@ -12,7 +12,8 @@ const About = () => {
         aboutDescription = "I am a Java developer specializing in backend and full-stack web application development...", 
         aboutTitle = "About Me",
         aboutImage,
-        brandName = "Developer"
+        brandName = "Developer",
+        resumeUrl = "/resume.pdf"
     } = content || {};
 
     const displayImg = aboutImage || profileImg;
@@ -55,8 +56,9 @@ const About = () => {
                         </p>
                         <div className="pt-6 border-t border-slate-100 dark:border-slate-800 mt-8">
                             <a 
-                                href="/resume.pdf" 
+                                href={resumeUrl} 
                                 target="_blank" 
+                                rel="noopener noreferrer"
                                 className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors font-medium shadow-md hover:shadow-xl"
                             >
                                 <Download size={20} /> Download Resume

@@ -37,7 +37,8 @@ export const ContentProvider = ({ children }) => {
                 contactPhone: "Not provided",
                 location: "India",
                 linkedinUrl: "https://linkedin.com",
-                githubUrl: "https://github.com"
+                githubUrl: "https://github.com",
+                resumeUrl: ""
             });
         } finally {
             setLoading(false);

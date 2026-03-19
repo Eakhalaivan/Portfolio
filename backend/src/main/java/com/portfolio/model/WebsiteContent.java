@@ -36,6 +36,8 @@ public class WebsiteContent {
     private String contactSubtitle;
     @Column(length = 1000)
     private String contactDescription;
+    
+    private String resumeUrl;
 
     // Default constructor
     public WebsiteContent() {}
@@ -100,4 +102,8 @@ public class WebsiteContent {
 
     public String getContactDescription() { return contactDescription; }
     public void setContactDescription(String contactDescription) { this.contactDescription = contactDescription; }
+
+    public String getResumeUrl() { return resumeUrl; }
+    public void setResumeUrl(String resumeUrl) { this.resumeUrl = resumeUrl; }
 }
+
