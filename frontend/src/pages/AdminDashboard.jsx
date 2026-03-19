@@ -79,6 +79,12 @@ const AdminDashboard = () => {
 
     const [isSavingProject, setIsSavingProject] = useState(false);
     const [isSavingSkill, setIsSavingSkill] = useState(false);
+    const [notification, setNotification] = useState(null);
+
+    const showNotification = (message, type = 'success') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 3000);
+    };
 
     useEffect(() => {
         loadAllData();
@@ -136,10 +142,12 @@ const AdminDashboard = () => {
             }
             setIsProjectModalOpen(false);
             setEditingProject(null);
-            await loadAllData();
+            showNotification('Project saved successfully!');
+            // Refresh in background to keep UI snappy
+            loadAllData();
         } catch (err) {
             console.error('Save error:', err);
-            alert(`Error saving project: ${err.message}. Please check if you are logged in correctly.`);
+            alert(`Error saving project: ${err.message}`);
         } finally {
             setIsSavingProject(false);
         }
@@ -150,7 +158,8 @@ const AdminDashboard = () => {
         try {
             await createSkill(token, skillData);
             setIsSkillModalOpen(false);
-            await loadAllData();
+            showNotification('Skill added successfully!');
+            loadAllData();
         } catch (err) {
             alert('Error saving skill: ' + err.message);
         } finally {
@@ -164,7 +173,7 @@ const AdminDashboard = () => {
         try {
             await updateWebsiteContent(token, contentForm);
             await refreshContent();
-            alert('Website content updated successfully!');
+            showNotification('Website content updated successfully!');
         } catch (err) {
             alert('Error updating content: ' + err.message);
         } finally {
@@ -197,7 +206,21 @@ const AdminDashboard = () => {
     ];
 
     return (
-        <div className="flex min-h-screen bg-slate-50">
+        <div className="flex min-h-screen bg-slate-50 relative">
+            {/* Notification Toast */}
+            {notification && (
+                <div className={`fixed bottom-8 right-8 z-[100] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-bottom-5 fade-in duration-300 ${
+                    notification.type === 'error' ? 'bg-red-600 text-white' : 'bg-slate-900 text-white border border-slate-800'
+                }`}>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${notification.type === 'error' ? 'bg-white/20' : 'bg-blue-500/20'}`}>
+                        {notification.type === 'error' ? <X size={18} /> : <Zap size={18} className="text-blue-400" />}
+                    </div>
+                    <div>
+                        <p className="font-bold text-sm tracking-tight">{notification.message}</p>
+                    </div>
+                </div>
+            )}
+
             {/* Sidebar */}
             <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col fixed h-full z-20">
                 <div className="p-6">
