@@ -26,7 +26,11 @@ import {
     ChevronRight,
     Settings,
     Save,
-    Code
+    Code,
+    Upload,
+    FileText,
+    Image as ImageIcon,
+    X
 } from 'lucide-react';
 import { useContent } from '../context/ContentContext';
 import ProjectModal from '../components/ProjectModal';
