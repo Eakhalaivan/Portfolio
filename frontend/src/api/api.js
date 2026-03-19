@@ -1,4 +1,7 @@
-const API_URL = '/api';
+// Use production Render URL in Vercel, else proxy locally through Vite
+const API_URL = import.meta.env.PROD 
+    ? 'https://portfolio-t4qu.onrender.com/api' 
+    : '/api';
 
 export const fetchProjects = async () => {
     const response = await fetch(`${API_URL}/projects`);
